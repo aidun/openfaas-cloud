@@ -97,7 +97,7 @@ func formatCloudName(name, owner string) string {
 	return owner + "-" + name
 }
 
-func included(fn *openFaaSFunction, owner string, functionStack []string) bool {
+func included(fn *sdk.Function, owner string, functionStack []string) bool {
 
 	for _, name := range functionStack {
 		if strings.EqualFold(formatCloudName(name, owner), fn.Name) {
@@ -146,7 +146,7 @@ func deleteFunction(target, gatewayURL string) error {
 	return err
 }
 
-func listFunctions(owner, gatewayURL string) ([]openFaaSFunction, error) {
+func listFunctions(owner, gatewayURL string) ([]sdk.Function, error) {
 
 	var err error
 
@@ -167,7 +167,7 @@ func listFunctions(owner, gatewayURL string) ([]openFaaSFunction, error) {
 				log.Fatal(bErr)
 			}
 
-			functions := []openFaaSFunction{}
+			functions := []sdk.Function{}
 			mErr := json.Unmarshal(bodyBytes, &functions)
 			if mErr != nil {
 				log.Fatal(mErr)
@@ -186,16 +186,16 @@ type GarbageRequest struct {
 	Owner     string   `json:"owner"`
 }
 
-type openFaaSFunction struct {
-	Name   string            `json:"name"`
-	Image  string            `json:"image"`
-	Labels map[string]string `json:"labels"`
-}
+// type openFaaSFunction struct {
+// 	Name   string            `json:"name"`
+// 	Image  string            `json:"image"`
+// 	Labels map[string]string `json:"labels"`
+// }
 
-func (f *openFaaSFunction) GetOwner() string {
+func (f *sdk.Function) GetOwner() string {
 	return f.Labels[sdk.FunctionLabelPrefix+"git-owner"]
 }
 
-func (f *openFaaSFunction) GetRepo() string {
+func (f *sdk.Function) GetRepo() string {
 	return f.Labels[sdk.FunctionLabelPrefix+"git-repo"]
 }
